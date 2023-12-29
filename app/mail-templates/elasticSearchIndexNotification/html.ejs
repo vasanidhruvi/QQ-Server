@@ -1,0 +1,77 @@
+<div id="body" style="width:100%;background-color: #F5F5F5;padding-top:5%;padding-bottom:5%;">
+  <div style="-webkit-box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.35);
+    -moz-box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.35);
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.35);
+    width: 90%;
+    margin: 0 auto;
+    border-radius: 10px;
+    overflow:hidden;">
+    <!-- <div style="display: table;
+      width: 100%;
+      margin:0 auto;
+      font-size: 1em;
+      font-weight: 700;
+      background: #3b936d;
+      margin-top:initial;
+      border-radius: 10px 10px 0 0;
+      color: white;
+      font-family: 'Roboto', sans-serif;">
+      <img style="display:table-cell; height: 30px; margin: 10px 15px;" src="cid:logoUrl" />
+      <div style="display: table-cell;width: 100%;"></div>
+    </div> -->
+    <div style="width: auto;
+      margin:0 auto;
+      font-size: 12px;
+      background-color: #FFFFFF;
+      margin-top:initial;
+      border-radius: 0 0 10px 10px;
+      padding: 15px;
+      color: #444444;
+      font-family: 'Roboto', sans-serif;">
+      <div>
+        <p> Dear <b>
+            <%= userName %>
+          </b>, </p>
+        <p>
+          Elastic Search is down in the following customer tenant(s) and needs to be re-indexed.
+        </p>
+        <p>
+          Kindly login to <a href="<%=link%>">
+            <%= hostName %>
+          </a> and start re-indexing for the following customers from the
+          data repull page.
+        </p>
+
+        <p style="padding-top:20px">
+          <b>Customer Name</b>
+          <span>
+            <table>
+              <% for(let i=0; i < customers.length; i++) { %>
+                <tr>
+                  <td>
+                    <%= customers[i].customerName %>
+                  </td>
+                </tr>
+                <% } %>
+            </table>
+          </span>
+        </p>
+
+        <p style="padding-top:20px">
+        <p style="padding-bottom:5px">
+          <span style="font-style: italic;">Note: You are receiving this email as you are identified as a
+            Super User in <%= hostName %>.</span>
+        </p>
+        Thanks &amp; Regards,
+        <br />
+        <%= portalTitle %> Admin
+          <br />
+          </p>
+          <p style="color:#939393">
+            Note: This is an auto-generated mail. Please do not reply. If you have any query, feel free to <a
+              href="mailto:<%=contactEmail%>"><u>contact us</u></a>.
+          </p>
+      </div>
+    </div>
+  </div>
+</div>
