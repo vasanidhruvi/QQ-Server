@@ -10,6 +10,7 @@ const userRoutes = require('./users');
 const techRoutes = require('./tech');
 const parentRoutes = require('./parent');
 const questionRoutes = require('./question');
+const quizRoutes = require('./quiz')
 const homeClientRoutes = require('./home-clients');
 const express = require('express');
 
@@ -25,6 +26,7 @@ module.exports = function (app) {
   techRoutes(apiRoutes);
   parentRoutes(apiRoutes);
   questionRoutes(apiRoutes);
+  quizRoutes(apiRoutes);
 
   homeClientRoutes(clientRoutes)
   
