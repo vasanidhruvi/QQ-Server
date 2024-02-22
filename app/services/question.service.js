@@ -6,7 +6,7 @@ const helper = require('../middleware/utils');
 const ObjectId = require('mongoose').Types.ObjectId;
 const helpers = require('../utility');
 
-module.exports = { 
+module.exports = {
     addQuestion,
     getQuestion,
     deleteByQuestionId,
@@ -16,7 +16,7 @@ module.exports = {
 
 }
 
-function addQuestion(criteria){
+function addQuestion(criteria) {
 
     let promiseFunction = async (resolve, reject) => {
         try {
@@ -46,17 +46,17 @@ function addQuestion(criteria){
 
                     await questionData.save();
 
-                    resolve({ success: true, message: 'Question Answer Added Successfully!' });
+                    resolve({ success: true, message: 'Record Added Successfully!' });
                 } else {
                     reject({ success: false, message: 'Error while generating Unique Question Answer ID!' });
                     return;
                 }
-                
-             }else {
+
+            } else {
                 reject({ success: false, message: 'Data not Provided!' });
                 return;
             }
-        }catch (err) {
+        } catch (err) {
             reject({ success: false, message: 'Some unhandled server error has occurred', error: err });
         }
     }
@@ -64,11 +64,11 @@ function addQuestion(criteria){
 
 }
 
-function getQuestion(criteria){
+function getQuestion(criteria) {
     let promiseFunction = async (resolve, reject) => {
         try {
             let condition = [];
-            if (criteria) { 
+            if (criteria) {
                 if (criteria._id) {
                     condition.push({ $match: { _id: new ObjectId(criteria._id) } });
                 }
@@ -163,7 +163,7 @@ function getQuestion(criteria){
 
 }
 
-function deleteByQuestionId(criteria){
+function deleteByQuestionId(criteria) {
     let promiseFunction = async (resolve, reject) => {
         try {
             let dbTech = await QuestionCollection.findOne({ questionId: criteria.questionId }).exec();
@@ -204,7 +204,7 @@ function updateQuestion(criteria) {
     return new Promise(promiseFunction);
 }
 
-function getQuestionCountByLevel(criteria){
+function getQuestionCountByLevel(criteria) {
     let promiseFunction = async (resolve, reject) => {
         try {
             let dbTech = await QuestionCollection.findOne({ level: criteria.level }).exec();
@@ -224,56 +224,39 @@ function getQuestionCountByLevel(criteria){
     return new Promise(promiseFunction)
 }
 
-function getUserQuestion(req, res){
+function getUserQuestion(req, res) {
     let promiseFunction = async (resolve, reject) => {
-        // try {
-        //     let isExists = await TechCollection.findOne({ techName: criteria.techName }, { _id: 1 }).lean().exec();
-        //     if(isExists && isExists._id){
-        //         let data = {
-        //             technology: new ObjectId(isExists._id),
-        //             level: criteria.level
-        //         }
-        //         let questionList = await QuestionCollection.find(data, { questionId: 1, question: 1, answer: 1 }).exec();
-        //         // let questionList = await getQuestion(data);
-        //         resolve({ success: true, message: 'success!', data: questionList });
-        //         // resolve(questionList)
-        //     }
+        const page = parseInt(req.body.pageQuery) || 1; // Page number from the request query, default is 1
+        const pageSize = 1; // Number of records per page
 
-            const page = parseInt(req.body.pageQuery) || 1; // Page number from the request query, default is 1
-            const pageSize = 1; // Number of records per page
-
-            try {
+        try {
             let isExists = await TechCollection.findOne({ techName: req.body.techName }, { _id: 1 }).lean().exec();
-                const totalCount = await QuestionCollection.countDocuments(
+            const totalCount = await QuestionCollection.countDocuments(
                 {
-                     technology: new ObjectId(isExists._id),
-                     level: req.body.level
-                 }
-                );
-                const totalPages = Math.ceil(totalCount / pageSize);
-
-                const skip = (page - 1) * pageSize;
-                const records = await QuestionCollection.find({
                     technology: new ObjectId(isExists._id),
                     level: req.body.level
-                }).sort({ questionId: 1 }).skip(skip).limit(pageSize);
+                }
+            );
+            const totalPages = Math.ceil(totalCount / pageSize);
 
-                res.json({
+            const skip = (page - 1) * pageSize;
+            const records = await QuestionCollection.find({
+                technology: new ObjectId(isExists._id),
+                level: req.body.level
+            }).sort({ questionId: 1 }).skip(skip).limit(pageSize);
+
+            res.json({
                 success: true,
                 records,
                 currentPage: page,
                 totalPages,
                 totalCount,
-                });
-            } catch (error) {
-                console.error(error);
-                res.status(500).json({ error: 'Internal Server Error' });
-            }
-        // }
-        // catch (err) {
-        //     reject({ success: false, message: 'Some unhandled server error has occurred', error: err });
-        // }
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
     }
     return new Promise(promiseFunction);
-    
+
 }

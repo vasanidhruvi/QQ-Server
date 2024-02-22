@@ -48,11 +48,10 @@ function getAll(criteria) {
                 if (criteria.breadcrumbs || criteria.breadcrumbs === false) {
                     condition.push({ $match: { breadcrumbs: criteria.breadcrumbs } });
                 }
-            }
-            if (criteria && criteria.sort) {
-                condition.push({ $sort: criteria.sort });
-            } else {
-                condition.push({ $sort: { updatedAt: 1 } });
+
+                if (criteria.fieldsToSelect) {
+                    condition.push({ $project: criteria.fieldsToSelect });
+                }
             }
             let lookup = {
                 $lookup:
@@ -67,9 +66,9 @@ function getAll(criteria) {
                 }
             }
             condition.push(lookup)
-            condition.push({
-                $unwind: '$user' // Unwind the user array created by $lookup
-            })
+            condition.push(
+                { $unwind: { path: '$user', preserveNullAndEmptyArrays: true } }
+            )
 
             let lookupParent = {
                 $lookup:
@@ -84,9 +83,15 @@ function getAll(criteria) {
                 }
             }
             condition.push(lookupParent)
-            condition.push({
-                $unwind: '$parent' // Unwind the user array created by $lookup
-            })
+            condition.push(
+                { $unwind: { path: '$parent', preserveNullAndEmptyArrays: true } }
+            )
+
+            if (criteria && criteria.sort) {
+                condition.push({ $sort: criteria.sort });
+            } else {
+                condition.push({ $sort: { updatedAt: 1 } });
+            }
 
             let techList = await TechCollection.aggregate(condition).exec();
 
